@@ -14,7 +14,9 @@ import (
 )
 
 const (
-	addTaskQuery = `insert into (id, task_name) values (:id, :task_name)`
+	addTaskQuery    = `insert into tasks (id, task_name) values (?, ?)`
+	finishTaskQuery = `delete from tasks`
+	showTasksQuery  = `select * from tasks`
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -37,14 +39,40 @@ var addTaskCmd = &cobra.Command{
 	},
 }
 
+var showTasksCmd = &cobra.Command{
+	Use:   "tasks",
+	Short: "Show all tasks in To:Do",
+	Run: func(cmd *cobra.Command, args []string) {
+		ctx := context.Background()
+		res, err := dbConn.QueryContext(ctx, showTasksQuery)
+		if err != nil {
+			log.Fatalln("Error in fetching tasks from database: ", err)
+		}
+
+		if res != nil {
+			defer res.Close()
+		}
+
+		for res.Next() {
+			fmt.Println(res)
+		}
+
+		fmt.Println()
+		fmt.Println("Tasks printed successfully")
+	},
+}
+
 var finishTaskCmd = &cobra.Command{
 	Use:   "finish",
 	Short: "Move the task to completed state",
-}
-
-var deleteTaskCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete a task from the task list",
+	Run: func(cmd *cobra.Command, args []string) {
+		ctx := context.Background()
+		_, err := dbConn.ExecContext(ctx, finishTaskQuery)
+		if err != nil {
+			log.Fatalln("Error in finishing task from database: ", err)
+		}
+		fmt.Println("Task finished")
+	},
 }
 
 var dbConn *sqlx.DB
@@ -60,16 +88,8 @@ func Execute(databaseConn *sqlx.DB) {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.expense_tracker.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.AddCommand(addTaskCmd)
 	rootCmd.AddCommand(finishTaskCmd)
-	rootCmd.AddCommand(deleteTaskCmd)
+	rootCmd.AddCommand(showTasksCmd)
 }
