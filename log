@@ -1,0 +1,10 @@
+# get https://proxy.golang.org/golang.org/x/mobile/@v/list
+# get https://proxy.golang.org/golang.org/x/mobile/@v/list: 200 OK (0.676s)
+# get https://proxy.golang.org/golang.org/x/mobile/@latest
+# get https://proxy.golang.org/golang.org/x/mobile/@latest: 200 OK (0.090s)
+# get https://proxy.golang.org/golang.org/x/sync/@v/list
+# get https://proxy.golang.org/golang.org/x/mod/@v/list
+# get https://proxy.golang.org/golang.org/x/tools/@v/list
+# get https://proxy.golang.org/golang.org/x/sync/@v/list: 200 OK (0.320s)
+# get https://proxy.golang.org/golang.org/x/mod/@v/list: 200 OK (0.454s)
+# get https://proxy.golang.org/golang.org/x/tools/@v/list: 200 OK (0.472s)
